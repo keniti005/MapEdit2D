@@ -1,8 +1,10 @@
 #include "PlayScene.h"
+#include "../Stage.h"
 #include <DxLib.h>
 
 PlayScene::PlayScene()
 {
+	new Stage();
 }
 
 PlayScene::~PlayScene()
