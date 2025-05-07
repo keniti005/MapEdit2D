@@ -2,8 +2,9 @@
 
 namespace
 {
-	const int IMAGE_SIZE = 32;
-	const int MAP_CHIP_WIDTH = 16;
+	const int IMAGE_SIZE = { 32 };//画像サイズ
+	const int MAP_CHIP_WIDTH = { 16 };
+	const int MAP_CHIP_HEIGHT = { 12 };
 	const int MAP_WIDTH = { 32 };
 	const int MAP_HEIGHT = { 22 };
 	const int myMap[MAP_HEIGHT][MAP_WIDTH]
@@ -47,13 +48,28 @@ namespace
 }
 
 Stage::Stage()
-	: GameObject(), bgHandle(-1)
+	: GameObject()//, bgHandle(nullptr)
 {
-	bgHandle = LoadGraph("./bg.png");
+	//bgHandle = new int[MAP_WIDTH * MAP_HEIGHT];
+	bgHandle_ = std::vector<int>(MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, -1);
+
+	//bgHandle = LoadGraph("./bg.png");
+	LoadDivGraph("./bg.png", MAP_CHIP_WIDTH, MAP_CHIP_HEIGHT, MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, IMAGE_SIZE, IMAGE_SIZE, bgHandle_.data());
+
+	mapChip_ = new MapChip();//マップチップのインスタンスを作成
 }
 
 Stage::~Stage()
 {
+	for (int i = 0;i < MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT;i++)
+	{
+		if (bgHandle_[i] != -1)
+		{
+			DeleteGraph(bgHandle_[i]);
+			bgHandle_[i] = -1;
+		}
+	}
+	//delete[] bgHandle;
 }
 
 void Stage::Update()
@@ -62,18 +78,17 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-	if (bgHandle != -1)
-	{
 		//DrawGraph(0, 0, bgHandle, FALSE);
 		for (int j = 0;j < MAP_HEIGHT;j++)
 		{
 			for (int i = 0;i < MAP_WIDTH;i++)
 			{
-				int col = myMap[j][i] % MAP_CHIP_WIDTH;
-				int row = myMap[j][i] / MAP_CHIP_WIDTH;
-				DrawRectGraph(i * IMAGE_SIZE, j * IMAGE_SIZE,col * IMAGE_SIZE, row * IMAGE_SIZE, IMAGE_SIZE, IMAGE_SIZE, bgHandle, FALSE);
+				if (bgHandle_[j*i] != -1)
+				{
+					DrawGraph(i * IMAGE_SIZE, j * IMAGE_SIZE, bgHandle_[myMap[j][i]], TRUE);
+				}
 			}
 		}
-	}
+	
 }
 
