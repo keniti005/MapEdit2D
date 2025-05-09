@@ -16,7 +16,7 @@ MapChip::MapChip()
 	:GameObject()
 	,bgHandle(MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, -1)
 {	
-	LoadDivGraph("./bg.png", MAP_CHIP_WIDTH, MAP_CHIP_HEIGHT, MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, IMAGE_SIZE, IMAGE_SIZE, bgHandle.data());
+	LoadDivGraph("./bg.png", MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, MAP_CHIP_WIDTH , MAP_CHIP_HEIGHT, IMAGE_SIZE, IMAGE_SIZE, bgHandle.data());
 }
 
 MapChip::~MapChip()
@@ -41,21 +41,20 @@ void MapChip::Draw()
 	int TOPLEFT_Y = 0;
 	int RIGHTBOTTOM_X = Screen::WIDTH;
 	int RIGHTBOTTOM_Y = MAP_CHIP_WIN_HEIGHT;
-
-	for (int j = 0;j < MAP_CHIP_NUM_Y;j++)
+	for (int i = 0;i < MAP_CHIP_NUM_X;i++)
 	{
-		for (int i = 0;i < MAP_CHIP_NUM_X;i++)
+		for (int j = 0;j < MAP_CHIP_NUM_Y;j++)
 		{
-			DrawGraph(TOPLEFT_X + i * IMAGE_SIZE, TOPLEFT_Y + j * IMAGE_SIZE, bgHandle[i * j * MAP_CHIP_NUM_X], TRUE);
+			DrawGraph(TOPLEFT_X + i * IMAGE_SIZE, TOPLEFT_Y + j * IMAGE_SIZE, bgHandle[i + j * MAP_CHIP_NUM_X], TRUE);
 		}
 	}
 
 
 	DrawBox(TOPLEFT_X, TOPLEFT_Y,RIGHTBOTTOM_X , RIGHTBOTTOM_Y, GetColor(255, 0, 0), FALSE , 3);
 
-	//for (int j = 0;j < MAP_CHIP_HEIGHT;j++)
+	//for (int i = 0;i < MAP_CHIP_WIDTH;i++)
 	//{
-	//	for (int i = 0;i < MAP_CHIP_WIDTH;i++)
+	//	for (int j = 0;j < MAP_CHIP_HEIGHT;j++)
 	//	{
 	//		DrawGraph(i * IMAGE_SIZE, j * IMAGE_SIZE, bgHandle[i * j * MAP_CHIP_WIDTH], TRUE);
 	//	}
