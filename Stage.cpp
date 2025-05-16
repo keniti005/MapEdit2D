@@ -1,4 +1,5 @@
 #include "Stage.h"
+#include "Input.h"
 
 namespace
 {
@@ -83,6 +84,10 @@ void Stage::Update()
 
 void Stage::Draw()
 {
+	if (Input::IsMouseDown())
+	{
+		DxLib::printfDx("ƒ}ƒEƒX‚ª‰Ÿ‚³‚ê‚½\n");
+	}
 		////DrawGraph(0, 0, bgHandle, FALSE);
 		//for (int j = 0;j < MAP_HEIGHT;j++)
 		//{
