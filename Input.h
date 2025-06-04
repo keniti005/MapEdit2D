@@ -15,4 +15,11 @@ namespace Input {
 	bool IsMouseDown();
 	bool IsMouseUP();
 	bool IsMouseKeep();
+	bool IsButtonDown(int Button);
+	bool IsButtonUP(int Button);
+	bool IsButtonKeep(int Button);
 }
+
+//MOUSE_INTPUT_LEFT=>0x0001
+//MOUSE_INTPUT_MIDLE=>0x0004
+//MOUSE_INTPUT_RIGHT=>0x0002

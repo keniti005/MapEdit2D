@@ -51,18 +51,31 @@ int Input::IsKeepKeyDown(int keyCode)
 
 bool Input::IsMouseDown()
 {
-	//if ()
-	//{
-		return false;
-	//}
+	return (mouseNow && !mousePre);
 }
 
 bool Input::IsMouseUP()
 {
-	return false;
+	return (!mouseNow && mousePre);
 }
 
 bool Input::IsMouseKeep()
 {
-	return false;
+	return (mouseNow && mousePre);
+}
+
+bool Input::IsButtonDown(int Button)
+{
+	
+	return (((mousePre & Button) == 0) && ((mouseNow & Button) != 0));
+}
+
+bool Input::IsButtonUP(int Button)
+{
+	return (((mousePre & Button) != 0) && ((mouseNow & Button) == 0));
+}
+
+bool Input::IsButtonKeep(int Button)
+{
+	return (((mousePre & Button) != 0) && ((mouseNow & Button) != 0));
 }
