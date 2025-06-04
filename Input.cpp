@@ -65,8 +65,7 @@ bool Input::IsMouseKeep()
 }
 
 bool Input::IsButtonDown(int Button)
-{
-	
+{	
 	return (((mousePre & Button) == 0) && ((mouseNow & Button) != 0));
 }
 
