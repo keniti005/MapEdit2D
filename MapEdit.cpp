@@ -1,16 +1,44 @@
 #include "MapEdit.h"
+#include <assert.h>
 
 MapEdit::MapEdit()
-	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1)
+	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1),//初期値を-1で20*20
+	isInMapEditArea_(false)
 {
+	mapEditRect_ = { LEFT_MARGIN,TOP_MARGIN,MAP_WIDTH * MAP_IMAGE_SIZE,MAP_HEIGHT * MAP_IMAGE_SIZE };
 }
 
 MapEdit::~MapEdit()
 {
 }
 
+void MapEdit::SetMap(Point p, int value)
+{
+	//マップの座標pにvalueをセットする
+	//pが、配列の範囲外の時はassertに引っかかる
+	assert(p.x >= 0 && p.x < MAP_WIDTH);
+	assert(p.y >= 0 && p.y < MAP_HEIGHT);
+	myMap_[p.y * MAP_WIDTH + p.x] = value;//y行x列にvalueをセットする
+}
+
+int MapEdit::GetMap(Point p) const
+{
+	//マップの座標pに値をセットする
+	assert(p.x >= 0 && p.x < MAP_WIDTH);
+	assert(p.y >= 0 && p.y < MAP_HEIGHT);
+	return myMap_[p.y * MAP_WIDTH + p.x];
+}
+
 void MapEdit::Update()
 {
+	Point mousePos;
+	if (GetMousePoint(&mousePos.x, &mousePos.y) == -1)
+	{
+		return;
+	}
+	isInMapEditArea_ = (mousePos.x >= mapEditRect_.x && mousePos.x <= mapEditRect_.x + mapEditRect_.w &&
+						mousePos.y >= mapEditRect_.y && mousePos.y <= mapEditRect_.y + mapEditRect_.h);
+
 }
 
 void MapEdit::Draw()
@@ -24,6 +52,11 @@ void MapEdit::Draw()
 			DrawLine(MAP_IMAGE_SIZE * i + LEFT_MARGIN, TOP_MARGIN, MAP_IMAGE_SIZE * i + LEFT_MARGIN, MAP_HEIGHT * MAP_IMAGE_SIZE + TOP_MARGIN, GetColor(255, 255, 255), 1);
 			DrawLine(LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, GetColor(255, 255, 255), 1);
 		}
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
+
+	if (isInMapEditArea_)
+	{
+		DrawBox(mapEditRect_.x, mapEditRect_.y, mapEditRect_.x + mapEditRect_.w, mapEditRect_.y + mapEditRect_.h, GetColor(0, 255, 0), TRUE);
+	}
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }

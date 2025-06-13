@@ -9,12 +9,12 @@ class Stage :
 {
     //int *bgHandle;//拝啓画像のバンドルの配列へのポインタ
      
-//    std::vector<int> bgHandle_;
+    //std::vector<int> bgHandle_;
     MapChip* mapChip_;//マップチップのポインタ
-    MapEdit* mapEdit_;
-    bool isMouseDown_;
-    bool isOldMouseDown_;
-    bool isDragging_;
+    MapEdit* mapEdit_;//マップエディタのポインタ
+    bool isMouseDown_;//マウスの座標
+    bool isOldMouseDown_;//マウスの状態
+    bool isDragging_;//１フレ前のマウスの状態
 public:
     Stage();
     ~Stage();

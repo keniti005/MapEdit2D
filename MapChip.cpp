@@ -95,6 +95,7 @@ void MapChip::Draw()
 		{
 			DrawExtendGraph(mousePos.x, mousePos.y, mousePos.x + IMAGE_SIZE, mousePos.y + IMAGE_SIZE, selectedIndex_, TRUE);
 		}
+
 	}
 
 	//for (int i = 0;i < MAP_CHIP_WIDTH;i++)
@@ -112,4 +113,14 @@ void MapChip::Draw()
 	//
 	//DrawBox(TOPLEFT_X, TOPLEFT_Y, RIGHTBOTTOM_X, RIGHTBOTTOM_Y, GetColor(255, 0, 0), FALSE, 3);
 
+}
+
+bool MapChip::isHold()
+{
+	return isHold_;
+}
+
+int MapChip::GetHoldImage()
+{
+	return 0;
 }
