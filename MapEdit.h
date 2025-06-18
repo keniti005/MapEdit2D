@@ -24,6 +24,7 @@ public:
     void Draw()override;
 private:
     std::vector<int> myMap_;//マップの配列
+    Rect drawAreaRect_;//描画領域の矩形
     Rect mapEditRect_;//マップ領域の矩形
     bool isInMapEditArea_;//マップエディタの領域にあるか
 };

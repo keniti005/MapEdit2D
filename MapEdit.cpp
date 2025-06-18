@@ -1,4 +1,6 @@
 #include "MapEdit.h"
+#include "MapChip.h"
+#include "Input.h"
 #include <assert.h>
 
 MapEdit::MapEdit()
@@ -37,8 +39,27 @@ void MapEdit::Update()
 		return;
 	}
 	isInMapEditArea_ = (mousePos.x >= mapEditRect_.x && mousePos.x <= mapEditRect_.x + mapEditRect_.w &&
-						mousePos.y >= mapEditRect_.y && mousePos.y <= mapEditRect_.y + mapEditRect_.h);
+		mousePos.y >= mapEditRect_.y && mousePos.y <= mapEditRect_.y + mapEditRect_.h);
 
+	if (!isInMapEditArea_)//マップエディタ領域外は何もしない
+	{
+		return;
+	}
+	int gridX = (mousePos.x - LEFT_MARGIN) / MAP_IMAGE_SIZE;
+	int gridY = (mousePos.y - TOP_MARGIN) / MAP_IMAGE_SIZE;
+
+	drawAreaRect_ = {LEFT_MARGIN + gridX * MAP_IMAGE_SIZE,TOP_MARGIN + gridY * MAP_IMAGE_SIZE,
+	MAP_IMAGE_SIZE,MAP_IMAGE_SIZE};
+
+	//if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
+	//{
+	//	MapChip* mapChip = FindGameObject<MapChip>();
+
+	//	if (mapChip && mapChip->IsHold())//マップチップを持っている
+	//	{
+	//		SetMap({ gridX,gridY }, mapChip->GetHoldImage());
+	//	}
+	//}
 }
 
 void MapEdit::Draw()
@@ -53,6 +74,14 @@ void MapEdit::Draw()
 			DrawLine(LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, GetColor(255, 255, 255), 1);
 		}
 	}
+
+	//for (int i = 0;i < MAP_WIDTH;i++)
+	//{
+	//	for (int j = 0;j < MAP_HEIGHT;j++)
+	//	{
+
+	//	}
+	//}
 
 	if (isInMapEditArea_)
 	{

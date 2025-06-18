@@ -115,12 +115,19 @@ void MapChip::Draw()
 
 }
 
-bool MapChip::isHold()
+bool MapChip::IsHold()
 {
 	return isHold_;
 }
 
 int MapChip::GetHoldImage()
 {
-	return 0;
+	if (isHold_)
+	{
+		return selectedIndex_;
+	}
+	else
+	{
+		return -1;//‚Á‚Ä‚¢‚È‚¢ê‡‚Í-1‚ğ•Ô‚·
+	}
 }

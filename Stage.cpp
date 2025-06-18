@@ -114,6 +114,7 @@ void Stage::Update()
 	//{
 	//	DxLib::printfDx("マウスの座標取得失敗\n");
 	//}
+
 }
 
 void Stage::Draw()

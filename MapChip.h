@@ -20,7 +20,7 @@ public:
     ~MapChip();
     void Update()override;
     void Draw()override;
-    bool isHold();//マップチップを持っているかどうか
+    bool IsHold();//マップチップを持っているかどうか
     int GetHoldImage();//持ってるマップチップのハンドルの取得
 };
 
