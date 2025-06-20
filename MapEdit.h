@@ -20,6 +20,8 @@ public:
     ~MapEdit();
     void SetMap(Point p, int value);
     int GetMap(Point p) const;
+    bool IsInMapEditArea() const { return isInMapEditArea_; }
+
     void Update()override;
     void Draw()override;
 private:

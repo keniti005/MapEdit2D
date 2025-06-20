@@ -38,6 +38,7 @@ void MapEdit::Update()
 	{
 		return;
 	}
+	//マウスの座標がマップエディタの領域内にいるか
 	isInMapEditArea_ = (mousePos.x >= mapEditRect_.x && mousePos.x <= mapEditRect_.x + mapEditRect_.w &&
 		mousePos.y >= mapEditRect_.y && mousePos.y <= mapEditRect_.y + mapEditRect_.h);
 
@@ -51,15 +52,19 @@ void MapEdit::Update()
 	drawAreaRect_ = {LEFT_MARGIN + gridX * MAP_IMAGE_SIZE,TOP_MARGIN + gridY * MAP_IMAGE_SIZE,
 	MAP_IMAGE_SIZE,MAP_IMAGE_SIZE};
 
-	//if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
-	//{
-	//	MapChip* mapChip = FindGameObject<MapChip>();
+	if (Input::IsButtonKeep(MOUSE_INPUT_LEFT))
+	{
+		MapChip* mapChip = FindGameObject<MapChip>();
 
-	//	if (mapChip && mapChip->IsHold())//マップチップを持っている
-	//	{
-	//		SetMap({ gridX,gridY }, mapChip->GetHoldImage());
-	//	}
-	//}
+		if (mapChip && mapChip->IsHold())//マップチップを持っている
+		{
+			SetMap({ gridX,gridY }, mapChip->GetHoldImage());
+		}
+		//if (Input::IsKeepKeyDown(KEY_INPUT_LSHIFT))
+		//{
+		//	;
+		//}
+	}
 }
 
 void MapEdit::Draw()
@@ -74,18 +79,24 @@ void MapEdit::Draw()
 			DrawLine(LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, GetColor(255, 255, 255), 1);
 		}
 	}
-
-	//for (int i = 0;i < MAP_WIDTH;i++)
-	//{
-	//	for (int j = 0;j < MAP_HEIGHT;j++)
-	//	{
-
-	//	}
-	//}
-
 	if (isInMapEditArea_)
 	{
-		DrawBox(mapEditRect_.x, mapEditRect_.y, mapEditRect_.x + mapEditRect_.w, mapEditRect_.y + mapEditRect_.h, GetColor(0, 255, 0), TRUE);
+		//DrawBox(mapEditRect_.x, mapEditRect_.y, mapEditRect_.x + mapEditRect_.w, mapEditRect_.y + mapEditRect_.h, GetColor(0, 255, 0), TRUE);
+		DrawBox(drawAreaRect_.x, drawAreaRect_.y, drawAreaRect_.x + drawAreaRect_.w, drawAreaRect_.y + drawAreaRect_.h, GetColor(255, 255, 0), TRUE);
 	}
+
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	for (int i = 0; i < MAP_WIDTH; i++)
+	{
+		for (int j = 0; j < MAP_HEIGHT; j++)
+		{
+			int value = GetMap({ i,j });
+			if (value != -1)
+			{
+				DrawGraph(LEFT_MARGIN + i * MAP_IMAGE_SIZE, TOP_MARGIN + j * MAP_IMAGE_SIZE, value, TRUE);
+			}
+		}
+	}
+
 }

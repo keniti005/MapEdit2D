@@ -80,7 +80,6 @@ void MapChip::Draw()
 
 	if (isInMapChipArea_)
 	{
-
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 		DrawBox(TOPLEFT_X + selected_.x * IMAGE_SIZE, selected_.y * IMAGE_SIZE,
 			TOPLEFT_X + selected_.x * IMAGE_SIZE + IMAGE_SIZE, selected_.y * IMAGE_SIZE + IMAGE_SIZE, GetColor(132, 255, 193), TRUE);
@@ -96,6 +95,11 @@ void MapChip::Draw()
 			DrawExtendGraph(mousePos.x, mousePos.y, mousePos.x + IMAGE_SIZE, mousePos.y + IMAGE_SIZE, selectedIndex_, TRUE);
 		}
 
+		if (Input::IsButtonUP(MOUSE_INPUT_RIGHT))
+		{
+			isHold_ = false;
+			selectedIndex_ = -1;
+		}
 	}
 
 	//for (int i = 0;i < MAP_CHIP_WIDTH;i++)
