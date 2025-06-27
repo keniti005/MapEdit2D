@@ -2,6 +2,10 @@
 #include "MapChip.h"
 #include "Input.h"
 #include <assert.h>
+#include <fstream>
+#include <iostream>
+#include <string>
+
 
 MapEdit::MapEdit()
 	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1),//初期値を-1で20*20
@@ -60,33 +64,21 @@ void MapEdit::Update()
 		{
 			SetMap({ gridX,gridY }, mapChip->GetHoldImage());
 		}
+		//左シフトを押している状態でマップチップを削除
 		//if (Input::IsKeepKeyDown(KEY_INPUT_LSHIFT))
 		//{
 		//	;
 		//}
 	}
+
+	if (Input::IsKeyDown(KEY_INPUT_S))
+	{
+		SaveMapData();
+	}
 }
 
 void MapEdit::Draw()
 {
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-	DrawBox(LEFT_MARGIN, TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_HEIGHT * MAP_IMAGE_SIZE + TOP_MARGIN, GetColor(255, 255, 255), FALSE,5);
-	for (int i = 0; i < MAP_WIDTH;i ++)
-	{
-		for (int j = 0; j < MAP_HEIGHT; j ++)
-		{
-			DrawLine(MAP_IMAGE_SIZE * i + LEFT_MARGIN, TOP_MARGIN, MAP_IMAGE_SIZE * i + LEFT_MARGIN, MAP_HEIGHT * MAP_IMAGE_SIZE + TOP_MARGIN, GetColor(255, 255, 255), 1);
-			DrawLine(LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, GetColor(255, 255, 255), 1);
-		}
-	}
-	if (isInMapEditArea_)
-	{
-		//DrawBox(mapEditRect_.x, mapEditRect_.y, mapEditRect_.x + mapEditRect_.w, mapEditRect_.y + mapEditRect_.h, GetColor(0, 255, 0), TRUE);
-		DrawBox(drawAreaRect_.x, drawAreaRect_.y, drawAreaRect_.x + drawAreaRect_.w, drawAreaRect_.y + drawAreaRect_.h, GetColor(255, 255, 0), TRUE);
-	}
-
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	for (int i = 0; i < MAP_WIDTH; i++)
 	{
 		for (int j = 0; j < MAP_HEIGHT; j++)
@@ -99,4 +91,46 @@ void MapEdit::Draw()
 		}
 	}
 
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(LEFT_MARGIN, TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_HEIGHT * MAP_IMAGE_SIZE + TOP_MARGIN, GetColor(255, 255, 255), FALSE, 5);
+	for (int i = 0; i < MAP_WIDTH;i++)
+	{
+		for (int j = 0; j < MAP_HEIGHT; j++)
+		{
+			DrawLine(MAP_IMAGE_SIZE * i + LEFT_MARGIN, TOP_MARGIN, MAP_IMAGE_SIZE * i + LEFT_MARGIN, MAP_HEIGHT * MAP_IMAGE_SIZE + TOP_MARGIN, GetColor(255, 255, 255), 1);
+			DrawLine(LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, GetColor(255, 255, 255), 1);
+		}
+	}
+	if (isInMapEditArea_)
+	{
+		//DrawBox(mapEditRect_.x, mapEditRect_.y, mapEditRect_.x + mapEditRect_.w, mapEditRect_.y + mapEditRect_.h, GetColor(0, 255, 0), TRUE);
+		DrawBox(drawAreaRect_.x, drawAreaRect_.y, drawAreaRect_.x + drawAreaRect_.w, drawAreaRect_.y + drawAreaRect_.h, GetColor(255, 255, 0), TRUE);
+	}
+
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
+void MapEdit::SaveMapData()
+{
+	printfDx("file Save\n");
+	std::ofstream file("data.dat");
+	file << "#header" << std::endl
+		 << "WIDTH "  << MAP_WIDTH  << std::endl
+		 << "HEIGHT " << MAP_HEIGHT << std::endl << std::endl;
+
+	file << "#data" << std::endl;
+	for (auto& itr : myMap_)
+	{
+		file << itr << std::endl;
+	}
+	//for (int j = 0;j << MAP_HEIGHT;j++)
+	//{
+	//	for (int i = 0;i < MAP_WIDTH;i++)
+	//	{
+	//		file = GetMap({ i,j });
+	//	}
+	//	file << std::endl;
+	//}
+
+	file.close();
 }
