@@ -117,20 +117,31 @@ void MapEdit::SaveMapData()
 	file << "#header" << std::endl
 		 << "WIDTH "  << MAP_WIDTH  << std::endl
 		 << "HEIGHT " << MAP_HEIGHT << std::endl << std::endl;
-
 	file << "#data" << std::endl;
-	for (auto& itr : myMap_)
-	{
-		file << itr << std::endl;
-	}
-	//for (int j = 0;j << MAP_HEIGHT;j++)
+
+	MapChip* mc = FindGameObject<MapChip>();
+
+	//for (auto& itr : myMap_)
 	//{
-	//	for (int i = 0;i < MAP_WIDTH;i++)
-	//	{
-	//		file = GetMap({ i,j });
-	//	}
-	//	file << std::endl;
+	//	file << itr << std::endl;
 	//}
+	for (int j = 0;j < MAP_HEIGHT;j++)
+	{
+		for (int i = 0;i < MAP_WIDTH;i++)
+		{
+			int index;
+			if (myMap_[j * MAP_WIDTH + i] != -1)
+			{
+				index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
+			}
+			else
+			{
+				index = -1;
+			}
+			file << index << " ";
+		}
+		file << std::endl;
+	}
 
 	file.close();
 }

@@ -21,6 +21,14 @@ MapChip::MapChip()
 	,bgHandle(MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, -1)
 {	
 	LoadDivGraph("./bg.png", MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, MAP_CHIP_WIDTH , MAP_CHIP_HEIGHT, IMAGE_SIZE, IMAGE_SIZE, bgHandle.data());
+
+	//モーダルダイアログボックス（ファイル選択から出られないもの）
+	//モーデルダイアログボックス（小ウィンドウが付属されているもの）
+	//LUT(Look Up Table)というもの
+	for (int i = 0;i < bgHandle.size(); i++)
+	{
+		HandleToIndex[bgHandle[i]] = i;
+	}
 }
 
 MapChip::~MapChip()
@@ -134,4 +142,23 @@ int MapChip::GetHoldImage()
 	{
 		return -1;//持っていない場合は-1を返す
 	}
+}
+
+int MapChip::GetChipIndex(int handle)
+{
+	if (HandleToIndex[handle] != -1)
+	{
+		return HandleToIndex[handle];
+	}
+	else
+	{
+		return -1;
+	}
+	//for (int i = 0; i < bgHandle.size(); i++)
+	//{
+	//	if (handle == bgHandle[i])
+	//	{
+	//		return i;
+	//	}
+	//}
 }

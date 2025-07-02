@@ -2,6 +2,7 @@
 #include "Library/GameObject.h"
 #include "globals.h"
 #include <vector>
+#include <map>
 
 
 
@@ -15,8 +16,11 @@ public:
     void Draw()override;
     bool IsHold();//マップチップを持っているかどうか
     int GetHoldImage();//持ってるマップチップのハンドルの取得
+    int GetChipIndex(int handle);
 private:
     std::vector<int> bgHandle;
+    std::map<int, int>HandleToIndex;
+
     std::vector<Rect>bgRects_;
     bool isUpdate_;
     bool isInMapChipArea_;
