@@ -1,3 +1,4 @@
+#include <windows.h>
 #include "MapEdit.h"
 #include "MapChip.h"
 #include "Input.h"
@@ -5,7 +6,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
 
 MapEdit::MapEdit()
 	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1),//初期値を-1で20*20
@@ -112,36 +112,116 @@ void MapEdit::Draw()
 
 void MapEdit::SaveMapData()
 {
-	printfDx("file Save\n");
-	std::ofstream file("data.dat");
-	file << "#header" << std::endl
-		 << "WIDTH "  << MAP_WIDTH  << std::endl
-		 << "HEIGHT " << MAP_HEIGHT << std::endl << std::endl;
-	file << "#data" << std::endl;
+	//ファイル選択ダイアログ
+	TCHAR filename[255] = "";
+	OPENFILENAME ofn = {0};
 
-	MapChip* mc = FindGameObject<MapChip>();
+	ofn.lStructSize = sizeof(ofn);
+	//ウィンドウのオーナー＝親ウィンドウのハンドル
+	ofn.hwndOwner = GetMainWindowHandle();
+	ofn.lpstrFilter = "全てのファイル (*.*)\0*.*\0";
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = 255;
+	ofn.Flags = OFN_OVERWRITEPROMPT;
 
-	//for (auto& itr : myMap_)
-	//{
-	//	file << itr << std::endl;
-	//}
-	for (int j = 0;j < MAP_HEIGHT;j++)
+	if (GetSaveFileName(&ofn))
 	{
-		for (int i = 0;i < MAP_WIDTH;i++)
+		printfDx("ファイルが選択された\n");
+		//ファイルを開いて、セーブ
+		std::ofstream openfile(filename);
+		openfile << "#header" << std::endl
+			<< "WIDTH " << MAP_WIDTH << std::endl
+			<< "HEIGHT " << MAP_HEIGHT << std::endl << std::endl;
+		openfile << "#data" << std::endl;
+		MapChip* mc = FindGameObject<MapChip>();
+
+		//for (auto& itr : myMap_)
+		//{
+		//	file << itr << std::endl;
+		//}
+		for (int j = 0;j < MAP_HEIGHT;j++)
 		{
-			int index;
-			if (myMap_[j * MAP_WIDTH + i] != -1)
+			for (int i = 0;i < MAP_WIDTH;i++)
 			{
-				index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
+				int index;
+				if (myMap_[j * MAP_WIDTH + i] != -1)
+				{
+					index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
+				}
+				else
+				{
+					index = -1;
+				}
+				openfile << index << " ";
 			}
-			else
-			{
-				index = -1;
-			}
-			file << index << " ";
+			openfile << std::endl;
 		}
-		file << std::endl;
+		printfDx("file Save\n");
+		openfile.close();
+
+	}
+	else
+	{
+		//ファイルの選択がキャンセル
+		printfDx("セーブがキャンセル\n");
 	}
 
-	file.close();
+	//std::ofstream file("data.dat");
+
+}
+
+void MapEdit::LoadMapData()
+{
+	//ファイル選択ダイアログ
+	TCHAR filename[255] = "";
+	OPENFILENAME ofn = { 0 };
+
+	ofn.lStructSize = sizeof(ofn);
+	//ウィンドウのオーナー＝親ウィンドウのハンドル
+	ofn.hwndOwner = GetMainWindowHandle();
+	ofn.lpstrFilter = "全てのファイル (*.*)\0*.*\0";
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = 255;
+	ofn.Flags = OFN_NOCHANGEDIR;
+
+	if (GetSaveFileName(&ofn))
+	{
+		printfDx("ファイルが選択された\n");
+		//ファイルを開いて、ロード
+		std::ofstream openfile(filename);
+		MapChip* mc = FindGameObject<MapChip>();
+
+		//for (auto& itr : myMap_)
+		//{
+		//	file << itr << std::endl;
+		//}
+		for (int j = 0;j < MAP_HEIGHT;j++)
+		{
+			for (int i = 0;i < MAP_WIDTH;i++)
+			{
+				int index;
+				if (myMap_[j * MAP_WIDTH + i] != -1)
+				{
+					index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
+				}
+				else
+				{
+					index = -1;
+				}
+				openfile << index << " ";
+			}
+			openfile << std::endl;
+		}
+		printfDx("file Load\n");
+		openfile.close();
+
+	}
+	else
+	{
+		//ファイルの選択がキャンセル
+		printfDx("ロードがキャンセル\n");
+	}
+
+	//std::ofstream file("data.dat");
+
 }

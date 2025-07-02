@@ -25,6 +25,7 @@ public:
     void Update()override;
     void Draw()override;
     void SaveMapData();
+    void LoadMapData();
 private:
     std::vector<int> myMap_;//マップの配列
     Rect drawAreaRect_;//描画領域の矩形

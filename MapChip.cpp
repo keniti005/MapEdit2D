@@ -23,7 +23,7 @@ MapChip::MapChip()
 	LoadDivGraph("./bg.png", MAP_CHIP_WIDTH * MAP_CHIP_HEIGHT, MAP_CHIP_WIDTH , MAP_CHIP_HEIGHT, IMAGE_SIZE, IMAGE_SIZE, bgHandle.data());
 
 	//モーダルダイアログボックス（ファイル選択から出られないもの）
-	//モーデルダイアログボックス（小ウィンドウが付属されているもの）
+	//モードレスダイアログボックス（小ウィンドウが付属されているもの）
 	//LUT(Look Up Table)というもの
 	for (int i = 0;i < bgHandle.size(); i++)
 	{
