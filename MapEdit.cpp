@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include<sstream>
 
 MapEdit::MapEdit()
 	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1),//初期値を-1で20*20
@@ -75,6 +76,10 @@ void MapEdit::Update()
 	{
 		SaveMapData();
 	}
+	if (Input::IsKeyDown(KEY_INPUT_L))
+	{
+		LoadMapData();
+	}
 }
 
 void MapEdit::Draw()
@@ -129,10 +134,10 @@ void MapEdit::SaveMapData()
 		printfDx("ファイルが選択された\n");
 		//ファイルを開いて、セーブ
 		std::ofstream openfile(filename);
-		openfile << "#header" << std::endl
-			<< "WIDTH " << MAP_WIDTH << std::endl
-			<< "HEIGHT " << MAP_HEIGHT << std::endl << std::endl;
-		openfile << "#data" << std::endl;
+		//openfile << "#header" << std::endl
+			//<< "WIDTH " << MAP_WIDTH << std::endl
+			//<< "HEIGHT " << MAP_HEIGHT << std::endl << std::endl;
+		openfile << "#TinyMapData" << std::endl;
 		MapChip* mc = FindGameObject<MapChip>();
 
 		//for (auto& itr : myMap_)
@@ -172,7 +177,7 @@ void MapEdit::SaveMapData()
 
 void MapEdit::LoadMapData()
 {
-	//ファイル選択ダイアログ
+	//ファイル選択ダイアロoグ
 	TCHAR filename[255] = "";
 	OPENFILENAME ofn = { 0 };
 
@@ -184,36 +189,48 @@ void MapEdit::LoadMapData()
 	ofn.nMaxFile = 255;
 	ofn.Flags = OFN_NOCHANGEDIR;
 
-	if (GetSaveFileName(&ofn))
+	if (GetOpenFileName(&ofn))
 	{
 		printfDx("ファイルが選択された\n");
 		//ファイルを開いて、ロード
-		std::ofstream openfile(filename);
-		MapChip* mc = FindGameObject<MapChip>();
+		std::ifstream inputfile(filename);
+		std::string line;
 
-		//for (auto& itr : myMap_)
-		//{
-		//	file << itr << std::endl;
-		//}
-		for (int j = 0;j < MAP_HEIGHT;j++)
+		MapChip* mc = FindGameObject<MapChip>();
+		myMap_.clear();
+		while (std::getline(inputfile, line))
 		{
-			for (int i = 0;i < MAP_WIDTH;i++)
+			//空欄をスキップ
+			if (line.empty())
 			{
-				int index;
-				if (myMap_[j * MAP_WIDTH + i] != -1)
-				{
-					index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
-				}
-				else
-				{
-					index = -1;
-				}
-				openfile << index << " ";
+				continue;
 			}
-			openfile << std::endl;
+
+			printfDx("%s\n", line.c_str());
+			//読み込み処理
+			if (line[0] != '#')
+			{
+				std::istringstream iss(line);
+				int tmp;//これに1個ずつ読み込む
+				while (iss >> tmp)
+				{
+					if (tmp == -1)
+					{
+						myMap_.push_back(-1);
+					}
+					else
+					{
+						myMap_.push_back(mc->GetHandle(tmp));//マップにハンドルにセット
+					}
+				}
+			}
+			//else
+			//{
+			//	MessageBox(nullptr, "ファイル形式が違います", "読み込みエラー", MB_OK | MB_ICONWARNING);
+			//}
+
 		}
 		printfDx("file Load\n");
-		openfile.close();
 
 	}
 	else

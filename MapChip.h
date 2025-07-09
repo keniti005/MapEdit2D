@@ -14,6 +14,7 @@ public:
     ~MapChip();
     void Update()override;
     void Draw()override;
+    int GetHandle(int index) { return bgHandle[index]; }
     bool IsHold();//マップチップを持っているかどうか
     int GetHoldImage();//持ってるマップチップのハンドルの取得
     int GetChipIndex(int handle);
