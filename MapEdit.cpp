@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include<sstream>
+#include <sstream>
 
 MapEdit::MapEdit()
 	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1),//初期値を-1で20*20
@@ -56,7 +56,7 @@ void MapEdit::Update()
 
 	drawAreaRect_ = {LEFT_MARGIN + gridX * MAP_IMAGE_SIZE,TOP_MARGIN + gridY * MAP_IMAGE_SIZE,
 	MAP_IMAGE_SIZE,MAP_IMAGE_SIZE};
-
+	
 	if (Input::IsButtonKeep(MOUSE_INPUT_LEFT))
 	{
 		MapChip* mapChip = FindGameObject<MapChip>();
@@ -157,7 +157,15 @@ void MapEdit::SaveMapData()
 				{
 					index = -1;
 				}
-				openfile << index << " ";
+
+				if (i == MAP_WIDTH - 1)
+				{
+					openfile << index;
+				}
+				else
+				{
+					openfile << index << ',';
+				}
 			}
 			openfile << std::endl;
 		}
@@ -187,7 +195,7 @@ void MapEdit::LoadMapData()
 	ofn.lpstrFilter = "全てのファイル (*.*)\0*.*\0";
 	ofn.lpstrFile = filename;
 	ofn.nMaxFile = 255;
-	ofn.Flags = OFN_NOCHANGEDIR;
+	//ofn.Flags = OFN_NOCHANGEDIR;
 
 	if (GetOpenFileName(&ofn))
 	{
@@ -206,25 +214,36 @@ void MapEdit::LoadMapData()
 				continue;
 			}
 
-			printfDx("%s\n", line.c_str());
+			//printfDx("%s\n", line.c_str());
 			//読み込み処理
 			if (line[0] != '#')
 			{
 				std::istringstream iss(line);
-				int tmp;//これに1個ずつ読み込む
-				while (iss >> tmp)
+				std::string tmp;//これに1個ずつ読み込む
+				while (std::getline(iss, tmp, ','))
 				{
-					if (tmp == -1)
+					//if (tmp == -1)
+					//{
+					//	myMap_.push_back(-1);
+					//}
+					//else
+					//{
+					//	myMap_.push_back(mc->GetHandle(tmp));//マップにハンドルにセット
+					//}
+					printfDx("%s ", tmp.c_str());
+					if (tmp == "-1")
 					{
 						myMap_.push_back(-1);
 					}
 					else
 					{
-						myMap_.push_back(mc->GetHandle(tmp));//マップにハンドルにセット
+						int index = std::stoi(tmp);
+						int handle = mc->GetHandle(index);
+						myMap_.push_back(handle);
 					}
 				}
+				printfDx("\n");
 			}
-			//else
 			//{
 			//	MessageBox(nullptr, "ファイル形式が違います", "読み込みエラー", MB_OK | MB_ICONWARNING);
 			//}
