@@ -14,9 +14,8 @@ MapChipConfig& LoadMapChipConfig(const std::string& iniPath)
 	cfg.MAPCHIP_WIN_HEIGHT = cfg.TITLE_PIX_SIZE * cfg.MAPCHIP_VIEW_Y;
 	return cfg;
 }
-
 const MapChipConfig& GetMapChipConfig()
 {
-	static MapChipConfig config = LoadMapChipConfig(".\\mySetup.ini");
+	static MapChipConfig config = LoadMapChipConfig(".\\myChipSetup.ini");
 	return config;
 }

@@ -34,6 +34,6 @@ private:
     Point selected_;//選択肢したマップチップの座標
     int selectedIndex_;//選択したマップチップのインデックス
     bool isHold_;
-    Point scrollOffset_;
+    Point scrollOffset_;//スクロールオフセット
 };
 

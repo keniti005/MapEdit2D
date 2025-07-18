@@ -27,9 +27,10 @@ namespace
 //int cfg_.MAPCHIP_WIN_HEIGHT
 
 MapChip::MapChip()
-	:GameObject(),cfg_(GetMapChipConfig())
+	:GameObject(),cfg_(GetMapChipConfig()),isHold_(false),isUpdate_(false),isInMapChipArea_(false)
+	,selectedIndex_(-1),selected_({0,0})
 	,bgHandle(cfg_.TILES_X* cfg_.TILES_Y, -1)
-	, scrollOffset_({0,0})
+	,scrollOffset_({0,0})
 {	
 	LoadDivGraph("./bg.png", cfg_.TILES_X * cfg_.TILES_Y, cfg_.TILES_X, cfg_.TILES_Y, cfg_.TITLE_PIX_SIZE, cfg_.TITLE_PIX_SIZE, bgHandle.data());
 
@@ -91,12 +92,22 @@ void MapChip::Update()
 	{
 		if (Input::IsKeyDown(KEY_INPUT_LEFT))
 		{
-			scrollOffset_.x = std::max(0, scrollOffset_.x - 1);
+			//scrollOffset_.x = std::min(std::max(cfg_.MAPCHIP_VIEW_X,cfg_.MAPCHIP_VIEW_X - cfg_.TILES_Y), scrollOffset_.x + 1);
+			scrollOffset_.x = std::min(std::max(0, cfg_.TILES_X - cfg_.MAPCHIP_VIEW_X), scrollOffset_.x + 1);
 		}
 		if (Input::IsKeyDown(KEY_INPUT_RIGHT))
 		{
-			scrollOffset_.x = std::min(cfg_.MAPCHIP_VIEW_X - cfg_.TILES_X, scrollOffset_.x + 1);
+			scrollOffset_.x = std::max(0, scrollOffset_.x - 1);
 		}
+
+		//if (Input::IsKeyDown(KEY_INPUT_UP))
+		//{
+		//	scrollOffset_.y = std::min(std::max(0, cfg_.TILES_Y - cfg_.MAPCHIP_VIEW_Y), scrollOffset_.y + 1);
+		//}
+		//if (Input::IsKeyDown(KEY_INPUT_DOWN))
+		//{
+		//	scrollOffset_.y = std::max(0, scrollOffset_.y - 1);
+		//}
 
 		selected_ = ScreenToChipIndex(mousePos);
 		int index = selected_.y * cfg_.TILES_X + selected_.x;
@@ -120,8 +131,17 @@ void MapChip::Draw()
 	{
 		for (int j = 0;j < cfg_.TILES_Y;j++)
 		{
-			DrawGraph(GetViewOrigin().x + i * cfg_.TITLE_PIX_SIZE, 
-					  GetViewOrigin().y + j * cfg_.TITLE_PIX_SIZE, bgHandle[i+scrollOffset_.x + j * cfg_.TILES_X], TRUE);
+			int index = i + scrollOffset_.x + (scrollOffset_.y + j) * cfg_.TILES_X;
+			//int index = i + scrollOffset_.x + scrollOffset_.y + j * cfg_.TILES_X;
+			if (index < 0 || index >= bgHandle.size())
+			{
+				continue;
+			}
+			//DrawGraph(GetViewOrigin().x + i * cfg_.TITLE_PIX_SIZE, 
+			//			GetViewOrigin().y + j * cfg_.TITLE_PIX_SIZE, bgHandle[i + j * cfg_.TILES_X], TRUE);
+			DrawGraph(GetViewOrigin().x + i * cfg_.TITLE_PIX_SIZE,
+					  GetViewOrigin().y + j * cfg_.TITLE_PIX_SIZE, bgHandle[index], TRUE);
+
 		}
 	}
 

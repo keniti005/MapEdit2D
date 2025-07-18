@@ -10,7 +10,8 @@
 
 MapEdit::MapEdit()
 	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1),//èâä˙ílÇ-1Ç≈20*20
-	isInMapEditArea_(false)
+	isInMapEditArea_(false),
+	cfg_(GetMapEditConfig())
 {
 	mapEditRect_ = { LEFT_MARGIN,TOP_MARGIN,MAP_WIDTH * MAP_IMAGE_SIZE,MAP_HEIGHT * MAP_IMAGE_SIZE };
 }

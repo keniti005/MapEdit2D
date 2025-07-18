@@ -2,6 +2,7 @@
 #include "Library/GameObject.h"
 #include "globals.h"
 #include <vector>
+#include "MapEditConfig.h"
 
 namespace
 {
@@ -27,6 +28,7 @@ public:
     void SaveMapData();
     void LoadMapData();
 private:
+    MapEditConfig cfg_;
     std::vector<int> myMap_;//マップの配列
     Rect drawAreaRect_;//描画領域の矩形
     Rect mapEditRect_;//マップ領域の矩形
