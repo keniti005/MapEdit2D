@@ -92,7 +92,6 @@ void MapChip::Update()
 	{
 		if (Input::IsKeyDown(KEY_INPUT_LEFT))
 		{
-			//scrollOffset_.x = std::min(std::max(cfg_.MAPCHIP_VIEW_X,cfg_.MAPCHIP_VIEW_X - cfg_.TILES_Y), scrollOffset_.x + 1);
 			scrollOffset_.x = std::min(std::max(0, cfg_.TILES_X - cfg_.MAPCHIP_VIEW_X), scrollOffset_.x + 1);
 		}
 		if (Input::IsKeyDown(KEY_INPUT_RIGHT))
@@ -100,17 +99,20 @@ void MapChip::Update()
 			scrollOffset_.x = std::max(0, scrollOffset_.x - 1);
 		}
 
-		//if (Input::IsKeyDown(KEY_INPUT_UP))
-		//{
-		//	scrollOffset_.y = std::min(std::max(0, cfg_.TILES_Y - cfg_.MAPCHIP_VIEW_Y), scrollOffset_.y + 1);
-		//}
-		//if (Input::IsKeyDown(KEY_INPUT_DOWN))
-		//{
-		//	scrollOffset_.y = std::max(0, scrollOffset_.y - 1);
-		//}
+		if (Input::IsKeyDown(KEY_INPUT_UP))
+		{
+			scrollOffset_.y = std::max(0, scrollOffset_.y - 1);
+		}
+		if (Input::IsKeyDown(KEY_INPUT_DOWN))
+		{
+			scrollOffset_.y = std::min(std::max(0, cfg_.TILES_Y - cfg_.MAPCHIP_VIEW_Y), scrollOffset_.y + 1);
+		}
 
 		selected_ = ScreenToChipIndex(mousePos);
-		int index = selected_.y * cfg_.TILES_X + selected_.x;
+
+		int index = (selected_.y + scrollOffset_.y) * cfg_.TILES_X + selected_.x + scrollOffset_.x;
+
+		//int index = ((selected_.y - scrollOffset_.y) + cfg_.MAPCHIP_VIEW_Y) * cfg_.TILES_X + selected_.x + scrollOffset_.x;
 
 		if (Input::IsButtonDown(MOUSE_INPUT_LEFT))
 		{
@@ -129,16 +131,15 @@ void MapChip::Draw()
 	//マップチップ領域表示
 	for (int i = 0;i < cfg_.TILES_X;i++)
 	{
-		for (int j = 0;j < cfg_.TILES_Y;j++)
+		for (int j = 0;j < cfg_.MAPCHIP_VIEW_Y;j++)
 		{
-			int index = i + scrollOffset_.x + (scrollOffset_.y + j) * cfg_.TILES_X;
-			//int index = i + scrollOffset_.x + scrollOffset_.y + j * cfg_.TILES_X;
+
+			int index = i + scrollOffset_.x + (j + scrollOffset_.y) * cfg_.TILES_X;
+
 			if (index < 0 || index >= bgHandle.size())
 			{
 				continue;
 			}
-			//DrawGraph(GetViewOrigin().x + i * cfg_.TITLE_PIX_SIZE, 
-			//			GetViewOrigin().y + j * cfg_.TITLE_PIX_SIZE, bgHandle[i + j * cfg_.TILES_X], TRUE);
 			DrawGraph(GetViewOrigin().x + i * cfg_.TITLE_PIX_SIZE,
 					  GetViewOrigin().y + j * cfg_.TITLE_PIX_SIZE, bgHandle[index], TRUE);
 

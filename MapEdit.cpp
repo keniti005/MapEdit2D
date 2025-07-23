@@ -8,12 +8,27 @@
 #include <string>
 #include <sstream>
 
+namespace
+{
+	//const int MAP_IMAGE_SIZE = { 32 };//画像サイズ
+	//const int MAP_WIDTH = { 20 };
+	//const int MAP_HEIGHT = { 20 };
+	//const int LEFT_MARGIN = { 100 };
+	//const int TOP_MARGIN = { 40 };
+}
+//int TITLE_PIX_SIZE;
+//int MAPEDIT_WIDTH;
+//int MAPEDIT_HEIGHT;
+//int MARGIN_TOP;
+//int MARGIN_LEFT;
+
+
 MapEdit::MapEdit()
-	:GameObject(), myMap_(MAP_WIDTH* MAP_HEIGHT, -1),//初期値を-1で20*20
+	:GameObject(), myMap_(cfg_.MAPEDIT_WIDTH* cfg_.MAPEDIT_HEIGHT, -1),//初期値を-1で20*20
 	isInMapEditArea_(false),
 	cfg_(GetMapEditConfig())
 {
-	mapEditRect_ = { LEFT_MARGIN,TOP_MARGIN,MAP_WIDTH * MAP_IMAGE_SIZE,MAP_HEIGHT * MAP_IMAGE_SIZE };
+	mapEditRect_ = { cfg_.MARGIN_LEFT,cfg_.MARGIN_TOP,cfg_.MAPEDIT_WIDTH * cfg_.TITLE_PIX_SIZE,cfg_.MAPEDIT_HEIGHT * cfg_.TITLE_PIX_SIZE };
 }
 
 MapEdit::~MapEdit()
@@ -24,17 +39,17 @@ void MapEdit::SetMap(Point p, int value)
 {
 	//マップの座標pにvalueをセットする
 	//pが、配列の範囲外の時はassertに引っかかる
-	assert(p.x >= 0 && p.x < MAP_WIDTH);
-	assert(p.y >= 0 && p.y < MAP_HEIGHT);
-	myMap_[p.y * MAP_WIDTH + p.x] = value;//y行x列にvalueをセットする
+	assert(p.x >= 0 && p.x < cfg_.MAPEDIT_WIDTH);
+	assert(p.y >= 0 && p.y < cfg_.MAPEDIT_HEIGHT);
+	myMap_[p.y * cfg_.MAPEDIT_WIDTH + p.x] = value;//y行x列にvalueをセットする
 }
 
 int MapEdit::GetMap(Point p) const
 {
 	//マップの座標pに値をセットする
-	assert(p.x >= 0 && p.x < MAP_WIDTH);
-	assert(p.y >= 0 && p.y < MAP_HEIGHT);
-	return myMap_[p.y * MAP_WIDTH + p.x];
+	assert(p.x >= 0 && p.x < cfg_.MAPEDIT_WIDTH);
+	assert(p.y >= 0 && p.y < cfg_.MAPEDIT_HEIGHT);
+	return myMap_[p.y * cfg_.MAPEDIT_WIDTH + p.x];
 }
 
 void MapEdit::Update()
@@ -52,11 +67,11 @@ void MapEdit::Update()
 	{
 		return;
 	}
-	int gridX = (mousePos.x - LEFT_MARGIN) / MAP_IMAGE_SIZE;
-	int gridY = (mousePos.y - TOP_MARGIN) / MAP_IMAGE_SIZE;
+	int gridX = (mousePos.x - cfg_.MARGIN_LEFT) / cfg_.TITLE_PIX_SIZE;
+	int gridY = (mousePos.y - cfg_.MARGIN_TOP) / cfg_.TITLE_PIX_SIZE;
 
-	drawAreaRect_ = {LEFT_MARGIN + gridX * MAP_IMAGE_SIZE,TOP_MARGIN + gridY * MAP_IMAGE_SIZE,
-	MAP_IMAGE_SIZE,MAP_IMAGE_SIZE};
+	drawAreaRect_ = {cfg_.MARGIN_LEFT + gridX * cfg_.TITLE_PIX_SIZE,cfg_.MARGIN_TOP + gridY * cfg_.TITLE_PIX_SIZE,
+	cfg_.TITLE_PIX_SIZE,cfg_.TITLE_PIX_SIZE};
 	
 	if (Input::IsButtonKeep(MOUSE_INPUT_LEFT))
 	{
@@ -67,10 +82,10 @@ void MapEdit::Update()
 			SetMap({ gridX,gridY }, mapChip->GetHoldImage());
 		}
 		//左シフトを押している状態でマップチップを削除
-		//if (Input::IsKeepKeyDown(KEY_INPUT_LSHIFT))
-		//{
-		//	;
-		//}
+		if (Input::IsKeepKeyDown(KEY_INPUT_LSHIFT))
+		{
+			SetMap({ gridX,gridY }, -1);
+		}
 	}
 
 	if (Input::IsKeyDown(KEY_INPUT_S))
@@ -85,26 +100,26 @@ void MapEdit::Update()
 
 void MapEdit::Draw()
 {
-	for (int i = 0; i < MAP_WIDTH; i++)
+	for (int i = 0; i < cfg_.MAPEDIT_WIDTH; i++)
 	{
-		for (int j = 0; j < MAP_HEIGHT; j++)
+		for (int j = 0; j < cfg_.MAPEDIT_HEIGHT; j++)
 		{
 			int value = GetMap({ i,j });
 			if (value != -1)
 			{
-				DrawGraph(LEFT_MARGIN + i * MAP_IMAGE_SIZE, TOP_MARGIN + j * MAP_IMAGE_SIZE, value, TRUE);
+				DrawGraph(cfg_.MARGIN_LEFT + i * cfg_.TITLE_PIX_SIZE, cfg_.MARGIN_TOP + j * cfg_.TITLE_PIX_SIZE, value, TRUE);
 			}
 		}
 	}
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-	DrawBox(LEFT_MARGIN, TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_HEIGHT * MAP_IMAGE_SIZE + TOP_MARGIN, GetColor(255, 255, 255), FALSE, 5);
-	for (int i = 0; i < MAP_WIDTH;i++)
+	DrawBox(cfg_.MARGIN_LEFT, cfg_.MARGIN_TOP, cfg_.MAPEDIT_WIDTH * cfg_.TITLE_PIX_SIZE + cfg_.MARGIN_LEFT, cfg_.MAPEDIT_HEIGHT * cfg_.TITLE_PIX_SIZE + cfg_.MARGIN_TOP, GetColor(255, 255, 255), FALSE, 5);
+	for (int i = 0; i < cfg_.MAPEDIT_WIDTH;i++)
 	{
-		for (int j = 0; j < MAP_HEIGHT; j++)
+		for (int j = 0; j < cfg_.MAPEDIT_HEIGHT; j++)
 		{
-			DrawLine(MAP_IMAGE_SIZE * i + LEFT_MARGIN, TOP_MARGIN, MAP_IMAGE_SIZE * i + LEFT_MARGIN, MAP_HEIGHT * MAP_IMAGE_SIZE + TOP_MARGIN, GetColor(255, 255, 255), 1);
-			DrawLine(LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, MAP_WIDTH * MAP_IMAGE_SIZE + LEFT_MARGIN, MAP_IMAGE_SIZE * j + TOP_MARGIN, GetColor(255, 255, 255), 1);
+			DrawLine(cfg_.TITLE_PIX_SIZE * i + cfg_.MARGIN_LEFT, cfg_.MARGIN_TOP, cfg_.TITLE_PIX_SIZE * i + cfg_.MARGIN_LEFT, cfg_.MAPEDIT_HEIGHT * cfg_.TITLE_PIX_SIZE + cfg_.MARGIN_TOP, GetColor(255, 255, 255), 1);
+			DrawLine(cfg_.MARGIN_LEFT, cfg_.TITLE_PIX_SIZE * j + cfg_.MARGIN_TOP, cfg_.MAPEDIT_WIDTH * cfg_.TITLE_PIX_SIZE + cfg_.MARGIN_LEFT, cfg_.TITLE_PIX_SIZE * j + cfg_.MARGIN_TOP, GetColor(255, 255, 255), 1);
 		}
 	}
 	if (isInMapEditArea_)
@@ -145,21 +160,21 @@ void MapEdit::SaveMapData()
 		//{
 		//	file << itr << std::endl;
 		//}
-		for (int j = 0;j < MAP_HEIGHT;j++)
+		for (int j = 0;j < cfg_.MAPEDIT_HEIGHT;j++)
 		{
-			for (int i = 0;i < MAP_WIDTH;i++)
+			for (int i = 0;i < cfg_.MAPEDIT_WIDTH;i++)
 			{
 				int index;
-				if (myMap_[j * MAP_WIDTH + i] != -1)
+				if (myMap_[j * cfg_.MAPEDIT_WIDTH + i] != -1)
 				{
-					index = mc->GetChipIndex(myMap_[j * MAP_WIDTH + i]);
+					index = mc->GetChipIndex(myMap_[j * cfg_.MAPEDIT_WIDTH + i]);
 				}
 				else
 				{
 					index = -1;
 				}
 
-				if (i == MAP_WIDTH - 1)
+				if (i == cfg_.MAPEDIT_WIDTH - 1)
 				{
 					openfile << index;
 				}

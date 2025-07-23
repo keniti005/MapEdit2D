@@ -4,8 +4,8 @@ struct MapEditConfig
 	int TITLE_PIX_SIZE;
 	int MAPEDIT_WIDTH;
 	int MAPEDIT_HEIGHT;
-	int MARGIN_X;
-	int MARGIN_Y;
+	int MARGIN_TOP;
+	int MARGIN_LEFT;
 };
 
 const MapEditConfig& GetMapEditConfig();
